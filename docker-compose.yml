@@ -1,33 +1,56 @@
 services:
   php:
-    image: php:8.1-cli
-    container_name: php-container
-    platform: linux/amd64
+    build:
+      context: .
+    #  dockerfile: Dockerfile
+    container_name: php_app
+    ports:
+      - "8000:80"   # Exponer el puerto para acceder al servidor web PHP (si es necesario)
+    working_dir: /var/www/html
     volumes:
-      - ./src:/var/www/html  # Monta el directorio src a /var/www/html en el contenedor
-    working_dir: /var/www/html  # Define el directorio de trabajo dentro del contenedor
+      - .:/var/www/html  # Monta el directorio actual al contenedor PHP
+      #- ./vendor:/var/www/html/vendor  # Monta la carpeta vendor fuera del contenedor
+      #- ./composer.lock:/var/www/html/composer.lock  # Monta composer.lock fuera del contenedor
+      #- /var/www/html/vendor # Esto asegura que la carpeta vendor estén aislados dentro del contenedor y en la maquina local
+      #- ./vendor:/var/www/html/vendor  # Montar el volumen para la carpeta vendor
+      #- ./composer.lock:/var/www/html/composer.lock  # Montar el volumen para composer.lock
     networks:
-      - app-network
-    command: bash -c "composer install && tail -f /dev/null"  # Ejecuta composer install y mantiene el contenedor en ejecución
+      - app_network
+    depends_on:
+      - db
 
-  mysql:
+  db:
     image: mysql:5.7
-    container_name: mysql-container
+    container_name: mysql_db
     platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: my_database
-    ports:
-      - "3308:3306"  # Exponer el puerto de MySQL
+      MYSQL_ROOT_PASSWORD: MKdjWl$29#MD4&l5kw2?
+      MYSQL_DATABASE: prueba_tecnica_docfav
+      MYSQL_PASSWORD: MKdjWl$29#MD4&l5kw2?
     volumes:
-      - mysql-data:/var/lib/mysql  # Persistir los datos
+      - mysql_data:/var/lib/mysql
     networks:
-      - app-network
+      - app_network
+
+  composer:
+    image: composer:2
+    container_name: composer-container
+    volumes:
+      - .:/var/www/html
+    networks:
+      - app_network
+    entrypoint: ["composer", "install"]  # Ejecuta "composer install" automáticamente al arrancar
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+    depends_on:
+      - php
+    working_dir: /var/www/html
+
 
 volumes:
-  mysql-data:
+  mysql_data:
     driver: local
 
 networks:
-  app-network:
+  app_network:
     driver: bridge
