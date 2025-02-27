@@ -1,49 +1,36 @@
 <?php
 
-//namespace App\Domain\Model;
+namespace App\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-/**
- * @ORM\Entity
- * @ORM\Table(name="users")
- */
+use App\Domain\ValueObjects\UserId;
+use App\Domain\ValueObjects\Name;
+use App\Domain\ValueObjects\Email;
+use App\Domain\ValueObjects\Password;
+
+use DateTime;
+
 #[ORM\Entity]
-#[ORM\Table(name: 'user')]
+#[ORM\Table(name: 'users')]
 class User
 {
-     /** 
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
-    #[ORM\Id]
-    #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue]
-    private int $id;
 
-    #[ORM\Column(type: 'string')]
-    private string $name;
+    #[ORM\Embedded(class: UserId::class)]
+    private UserId $id;
 
+    #[ORM\Embedded(class: Name::class)]
+    private Name $name;
 
-    #[ORM\Column(type: 'string')]
-    private string $email;
+    #[ORM\Embedded(class: Email::class)]
+    private Email $email;
         
-
-    #[ORM\Column(type: 'string')]
-    private string $password;
+    #[ORM\Embedded(class: Password::class)]
+    private Password $password;
     
-    /** @ORM\Column(type="string") */
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
-    /**
-     * Constructor para inicializar el producto.
-     *
-     * @param string $name Nombre del producto.
-     * @param float $price Precio del producto.
-     * @param int $quantity Cantidad disponible del producto.
-     */
-    public function __construct(string $name, float $email, int $password)
+    public function __construct(Name $name, Email $email, Password $password)
     {
         $this->name = $name;
         $this->email = $email;
@@ -52,50 +39,42 @@ class User
 
     public function setUpdated(): void
     {
-        // WILL be saved in the database
         $this->createdAt = new DateTime("now");
     }
 
-    /**
-     * Obtiene el nombre del producto.
-     *
-     * @return string
-     */
-    public function getName(): string
+    public function getId(): UserId
+    {
+        return $this->id;
+    }
+
+    public function getName(): Name
     {
         return $this->name;
     }
 
-    /**
-     * Establece el nombre del producto.
-     *
-     * @param string $name
-     * @return void
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * Obtiene el precio del producto.
-     *
-     * @return float
-     */
-    public function getEmail(): string
+    public function getEmail(): Email
     {
         return $this->email;
     }
 
-    /**
-     * Establece el precio del producto.
-     *
-     * @param float $price
-     * @return void
-     */
     public function setEmail(string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getPassword(): Password
+    {
+        return $this->password;
+    }
+
+    public function setPassword(Password $password): void
+    {
+        $this->password = $password;
     }
 
 }
