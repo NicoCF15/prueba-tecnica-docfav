@@ -14,9 +14,6 @@ class UserId
 
     public function __construct(string $id)
     {
-        if (!filter_var($id, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("Invalid email format");
-        }
         $this->id = $id;
     }
 

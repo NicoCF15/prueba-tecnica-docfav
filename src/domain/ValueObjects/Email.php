@@ -3,7 +3,7 @@
 namespace App\Domain\ValueObjects;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\Exception\InvalidEmailException;
+use App\Domain\Exceptions\InvalidEmailException;
 
 #[ORM\Embeddable]
 class Email

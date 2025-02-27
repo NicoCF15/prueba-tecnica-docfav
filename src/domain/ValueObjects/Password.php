@@ -3,7 +3,7 @@
 namespace App\Domain\ValueObjects;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\Exception\WeakPasswordException;
+use App\Domain\Exceptions\WeakPasswordException;
 
 #[ORM\Embeddable]
 class Password
@@ -13,10 +13,13 @@ class Password
 
     public function __construct(string $password)
     {
-        if (!filter_var($password, FILTER_VALIDATE_EMAIL)) {
+        // Expresión regular para validar la contraseña
+        $pattern = '/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/';
+
+        if (!preg_match($pattern, $password)) {
             throw new WeakPasswordException("Contraseña débil");
         }
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
     }
 
     public function getPassword(): string

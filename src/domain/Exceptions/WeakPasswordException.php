@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Domain\Exceptions;
 
 class WeakPasswordException extends \InvalidArgumentException
 {

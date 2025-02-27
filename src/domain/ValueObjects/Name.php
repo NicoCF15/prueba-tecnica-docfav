@@ -3,6 +3,7 @@
 namespace App\Domain\ValueObjects;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Domain\Exceptions\InvalidNameException;
 
 #[ORM\Embeddable]
 class Name
@@ -12,8 +13,8 @@ class Name
 
     public function __construct(string $name)
     {
-        if (!filter_var($name, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("Invalid email format");
+        if (!preg_match( "/^[a-zA-Z]{2,}$/",$name)) {
+            throw new InvalidNameException("El nombre es inválido");
         }
         $this->name = $name;
     }
