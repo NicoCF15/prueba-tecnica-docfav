@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Controller;
+namespace App\Ui\Controllers;
 
 use App\Application\Dto\RegisterUserRequest;
 use App\Application\Dto\UserResponseDto;
@@ -13,29 +13,25 @@ use App\Domain\ValueObjects\Name;
 use App\Domain\ValueObjects\Email;
 use App\Application\Service\EmailService;
 use App\Application\Service\UserRegistrationService;
+use App\Domain\Events\User\UserRegisteredEvent;
+use App\Infrastructure\Events\EventDispatcher;
 
 class RegisterUserController
 {
     private RegisterUserUseCase $registerUserUseCase;
+    private EventDispatcher $eventDispatcher;
 
-    public function __construct(RegisterUserUseCase $registerUserUseCase)
+    public function __construct(RegisterUserUseCase $registerUserUseCase, EventDispatcher $eventDispatcher)
     {
         $this->registerUserUseCase = $registerUserUseCase;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function register()
     {
         // Verificar que la solicitud sea POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
-            $userResponseDTO = new UserResponseDto(
-                false, 
-                "Invalid HTTP method", 
-                405
-            );
-
-            header('Content-Type: application/json');
-            echo json_encode($userResponseDTO->getDtoData());
+            $this->sendErrorResponse("Invalid HTTP method", 405);
             return;
         }
 
@@ -45,14 +41,7 @@ class RegisterUserController
 
         // Validar los campos necesarios
         if (!(isset($data['name']) && isset($data['email']) && isset($data['password']))) {
-            $userResponseDTO = new UserResponseDto(
-                false, 
-                "Invalid body", 
-                400
-            );
-
-            header('Content-Type: application/json');
-            echo json_encode($userResponseDTO->getDtoData());
+            $this->sendErrorResponse("Invalid body", 400);
             return;
         }
 
@@ -64,58 +53,46 @@ class RegisterUserController
         } 
         catch (\InvalidArgumentException $e) {
 
-            http_response_code($e->getCode());
-
-            $userResponseDTO = new UserResponseDto(
-                false, 
-                $e->getMessage(), 
-                $e->getCode()
-            );
-
-            header('Content-Type: application/json');
-            echo json_encode($userResponseDTO->getDtoData());
+            $this->sendErrorResponse($e->getMessage(), $e->getCode());
             return;
         }
 
         // Ejecutar el caso de uso
         try {
             $registerUserRequest = new RegisterUserRequest($name, $email, $password);
+
+            $emailService = new EmailService();
+            $eventHandler = new UserRegisteredHandler($emailService);
+            $this->eventDispatcher->addListener(UserRegisteredEvent::class, [$eventHandler, 'handle']);
+
             $userResponseDTO = $this->registerUserUseCase->execute($registerUserRequest);
 
-            // Instanciar el servicio de correo
-            $emailService = new EmailService();
-
-            // Instanciar el manejador del evento
-            $eventHandler = new UserRegisteredHandler($emailService);
-
-            // Instanciar el servicio de registro de usuario
-            $userRegistrationService = new UserRegistrationService($eventHandler);
-
-            // Registrar un nuevo usuario (simulación)
-            $userRegistrationService->registerUser($data['email'], $data['name']);
-
-            // Preparar la respuesta JSON
-            $response = [
-                ...$userResponseDTO->getDtoData()
-            ];
+            $this->sendSuccessResponse($userResponseDTO);
         } catch (\Exception $e) {
-            $response = [
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ];
+            $this->sendErrorResponse($e->getMessage(), 500);
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
     }
+
+    private function sendErrorResponse(string $message, int $code){
+        $userResponseDTO = new UserResponseDto(false, $message, $code);
+        header('Content-Type: application/json', true, $code);
+        echo json_encode($userResponseDTO->getDtoData());
+    }
+
+    private function sendSuccessResponse(UserResponseDto $userResponseDTO){
+        header('Content-Type: application/json');
+        echo json_encode($userResponseDTO->getDtoData());
+    }
+
 }
 
 // Aquí la instancia del controlador con la inyección del caso de uso.
 $entityManager = require '/var/www/html/src/config/bootstrap.php';
 $userRepository = new DoctrineUserRepository($entityManager);
-$registerUserUseCase = new RegisterUserUseCase($userRepository);
+$eventDispatcher = new EventDispatcher();
+$registerUserUseCase = new RegisterUserUseCase($userRepository, $eventDispatcher);
 
-$controller = new RegisterUserController($registerUserUseCase);
+$controller = new RegisterUserController($registerUserUseCase, $eventDispatcher);
 $controller->register();
 
 

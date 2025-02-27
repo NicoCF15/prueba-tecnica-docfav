@@ -8,6 +8,6 @@ class EmailService
     public function sendWelcomeEmail(string $email, string $name): void
     {
         // Simulamos el envío de un correo electrónico.
-        //echo "Enviando correo de bienvenida a: $name <$email>\n";
+        echo "Enviando correo de bienvenida a: $name <$email>\n";
     }
 }

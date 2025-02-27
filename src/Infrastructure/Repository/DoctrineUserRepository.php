@@ -4,6 +4,7 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\Model\Entity\User;
+use App\Domain\ValueObjects\Email;
 use App\Domain\ValueObjects\UserId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -28,6 +29,11 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
 
     public function findById(UserId $id): ?User{
         return $this->userRepository->find($id);
+    }
+
+    public function findByEmail(Email $email): ?User{
+        $emailValue = $email->getEmail();
+        return $this->userRepository->findOneBy(['email.email' => $emailValue]);   
     }
 
     public function delete(UserId $id): void{
