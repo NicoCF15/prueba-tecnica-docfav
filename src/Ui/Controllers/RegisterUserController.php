@@ -5,12 +5,14 @@ namespace App\Application\Controller;
 use App\Application\Dto\RegisterUserRequest;
 use App\Application\Dto\UserResponseDto;
 use App\Application\Service\RegisterUserUseCase;
-
+use App\Domain\Events\Handler\UserRegisteredHandler;
 use App\Infrastructure\Repository\DoctrineUserRepository;
 
 use App\Domain\ValueObjects\Password;
 use App\Domain\ValueObjects\Name;
 use App\Domain\ValueObjects\Email;
+use App\Application\Service\EmailService;
+use App\Application\Service\UserRegistrationService;
 
 class RegisterUserController
 {
@@ -79,6 +81,18 @@ class RegisterUserController
         try {
             $registerUserRequest = new RegisterUserRequest($name, $email, $password);
             $userResponseDTO = $this->registerUserUseCase->execute($registerUserRequest);
+
+            // Instanciar el servicio de correo
+            $emailService = new EmailService();
+
+            // Instanciar el manejador del evento
+            $eventHandler = new UserRegisteredHandler($emailService);
+
+            // Instanciar el servicio de registro de usuario
+            $userRegistrationService = new UserRegistrationService($eventHandler);
+
+            // Registrar un nuevo usuario (simulación)
+            $userRegistrationService->registerUser($data['email'], $data['name']);
 
             // Preparar la respuesta JSON
             $response = [
