@@ -1,16 +1,17 @@
 <?php
 
+/**
+* This file is an entrypoint to execute the project.
+*/
 use App\Infrastructure\Service\EventHandlerInitializationService;
 use App\Ui\Controllers\RegisterUserController;
 use App\Application\Service\RegisterUserUseCase;
 use App\Infrastructure\Events\EventDispatcher;
 use App\Infrastructure\Repository\DoctrineUserRepository;
 
-// Aquí cargamos las dependencias o configuraciones necesarias
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
 require_once __DIR__ . '/../Router/Router.php';
 
-// Instanciamos el router
 $router = new Router();
 
 $router->post('/user', function() {
@@ -28,5 +29,4 @@ $router->post('/user', function() {
     $controller->register();
 });
 
-// El router se encarga de manejar la solicitud
 $router->run();
