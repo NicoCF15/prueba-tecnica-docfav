@@ -5,19 +5,15 @@ services:
     #  dockerfile: Dockerfile
     container_name: php_app
     ports:
-      - "8000:80"   # Exponer el puerto para acceder al servidor web PHP (si es necesario)
+      - "8000:8000"   # Exponer el puerto para acceder al servidor web PHP (si es necesario)
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html  # Monta el directorio actual al contenedor PHP
-      #- ./vendor:/var/www/html/vendor  # Monta la carpeta vendor fuera del contenedor
-      #- ./composer.lock:/var/www/html/composer.lock  # Monta composer.lock fuera del contenedor
-      #- /var/www/html/vendor # Esto asegura que la carpeta vendor estén aislados dentro del contenedor y en la maquina local
-      #- ./vendor:/var/www/html/vendor  # Montar el volumen para la carpeta vendor
-      #- ./composer.lock:/var/www/html/composer.lock  # Montar el volumen para composer.lock
     networks:
       - app_network
     depends_on:
       - db
+    command: ["php", "-S", "0.0.0.0:8000", "public/index.php"] # Ejecutar el servidor embebido en PHP en el puerto 8080
 
   db:
     image: mysql:8.0
@@ -49,7 +45,6 @@ services:
     depends_on:
       - php
     working_dir: /var/www/html
-
 
 volumes:
   mysql_data:

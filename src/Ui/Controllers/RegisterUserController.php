@@ -85,14 +85,3 @@ class RegisterUserController
     }
 
 }
-
-// Aquí la instancia del controlador con la inyección del caso de uso.
-$entityManager = require '/var/www/html/src/config/bootstrap.php';
-$userRepository = new DoctrineUserRepository($entityManager);
-$eventDispatcher = new EventDispatcher();
-$registerUserUseCase = new RegisterUserUseCase($userRepository, $eventDispatcher);
-
-$controller = new RegisterUserController($registerUserUseCase, $eventDispatcher);
-$controller->register();
-
-

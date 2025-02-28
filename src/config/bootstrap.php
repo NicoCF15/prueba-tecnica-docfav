@@ -13,7 +13,7 @@ $connectionOptions = [
     'driver' => 'pdo_mysql',
     'host' => 'localhost',    // Dirección de la base de datos
     'dbname' => 'prueba_tecnica_docfav',  // Nombre de la base de datos
-    'user' => 'usuario',      // Nombre de usuario
+    'user' => 'usuario_docfav',      // Nombre de usuario
     'password' => 'MKdjWl$29#MD4&l5kw2?',  // Contraseña de la base de datos
     'port' => '7300',         // Puerto (por defecto para MySQL)
 ];
