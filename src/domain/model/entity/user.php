@@ -53,7 +53,7 @@ class User
         return $this->name;
     }
 
-    public function setName(string $name): void
+    public function setName(Name $name): void
     {
         $this->name = $name;
     }
@@ -63,7 +63,7 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(Email $email): void
     {
         $this->email = $email;
     }

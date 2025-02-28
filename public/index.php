@@ -1,4 +1,6 @@
 <?php
+
+use App\Infrastructure\Service\EventHandlerInitializationService;
 use App\Ui\Controllers\RegisterUserController;
 use App\Application\Service\RegisterUserUseCase;
 use App\Infrastructure\Events\EventDispatcher;
@@ -16,9 +18,13 @@ $router->post('/user', function() {
     
     $userRepository = new DoctrineUserRepository($entityManager);
     $eventDispatcher = new EventDispatcher();
+    $eventInitializationService = new EventHandlerInitializationService($eventDispatcher);
+
+    $eventInitializationService->initializeEventHandlers();
+
     $registerUserUseCase = new RegisterUserUseCase($userRepository, $eventDispatcher);
     
-    $controller = new RegisterUserController($registerUserUseCase, $eventDispatcher);
+    $controller = new RegisterUserController($registerUserUseCase);
     $controller->register();
 });
 

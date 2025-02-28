@@ -12,19 +12,21 @@ use App\Domain\ValueObjects\Password;
 use App\Domain\ValueObjects\Name;
 use App\Domain\ValueObjects\Email;
 use App\Application\Service\EmailService;
+use App\Application\Service\EventHandlerInitializationService;
 use App\Application\Service\UserRegistrationService;
 use App\Domain\Events\User\UserRegisteredEvent;
+use App\Domain\Service\UserRegistrationDomainService;
 use App\Infrastructure\Events\EventDispatcher;
 
 class RegisterUserController
 {
     private RegisterUserUseCase $registerUserUseCase;
-    private EventDispatcher $eventDispatcher;
+    private UserRegistrationDomainService $userRegistrationDomainService;
 
-    public function __construct(RegisterUserUseCase $registerUserUseCase, EventDispatcher $eventDispatcher)
+    public function __construct(RegisterUserUseCase $registerUserUseCase)
     {
         $this->registerUserUseCase = $registerUserUseCase;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->userRegistrationDomainService = new UserRegistrationDomainService();
     }
 
     public function register()
@@ -45,25 +47,9 @@ class RegisterUserController
             return;
         }
 
-        // Crear Value Objects para el nombre, correo y contraseña
-        try {
-            $name = new Name($data['name']);
-            $email = new Email($data['email']);
-            $password = new Password($data['password']);
-        } 
-        catch (\InvalidArgumentException $e) {
-
-            $this->sendErrorResponse($e->getMessage(), $e->getCode());
-            return;
-        }
-
         // Ejecutar el caso de uso
         try {
-            $registerUserRequest = new RegisterUserRequest($name, $email, $password);
-
-            $emailService = new EmailService();
-            $eventHandler = new UserRegisteredHandler($emailService);
-            $this->eventDispatcher->addListener(UserRegisteredEvent::class, [$eventHandler, 'handle']);
+            $registerUserRequest = $this->userRegistrationDomainService->createRegisterUserRequest($data['name'],$data['email'],$data['password']);
 
             $userResponseDTO = $this->registerUserUseCase->execute($registerUserRequest);
 
