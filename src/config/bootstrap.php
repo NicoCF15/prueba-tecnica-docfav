@@ -1,9 +1,8 @@
 <?php
 
-require_once '/var/www/html/vendor/autoload.php';
-require_once '/var/www/html/src/config/env.config.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/env.config.php';
 
-//__DIR__ .
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\DBAL\DriverManager;
@@ -23,7 +22,7 @@ $connectionOptions = [
 ];
 
 // Configuración de los metadatos de Doctrine (puede estar en archivos YAML, XML o Annotations)
-$paths = ['/var/www/html/src/domain/model/entity'];  // Ruta donde se encuentran tus entidades
+$paths = [__DIR__ . '/../Domain/Model/Entity/'];  // Ruta donde se encuentran tus entidades
 $isDevMode = true;  // Si estás en modo de desarrollo o producción
 
 $cache = new FilesystemAdapter();
