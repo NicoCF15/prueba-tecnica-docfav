@@ -20,7 +20,7 @@ class UserId
         }
     }
 
-    public function getId(): string
+    public function getId(): int | null
     {
         return $this->id;
     }
