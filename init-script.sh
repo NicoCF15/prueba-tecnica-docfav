@@ -25,7 +25,7 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
     
     # Verify command execution
     if [ $? -eq 0 ]; then
-        echo ${DB_HOST}
+
         # Nombre del contenedor MySQL
         DB_CONTAINER="db"
         # Nombre del contenedor PHP
@@ -39,7 +39,7 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
 
         # Esperar a que MySQL esté listo para aceptar conexiones
         echo "Esperando a que MySQL esté listo para aceptar conexiones..."
-        until docker compose exec $DB_CONTAINER mysql -u root -p'MKdjWl$29#MD4&l5kw2?' -e "SELECT 1" > /dev/null 2>&1; do
+        until docker compose exec $DB_CONTAINER mysql -u root -p"$DB_ROOT_PASSWORD"  -e "SELECT 1" > /dev/null 2>&1; do
         echo "Esperando..."
         sleep 2
         done
@@ -48,7 +48,7 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
         docker compose exec php vendor/bin/doctrine orm:schema-tool:update --force --complete
 
         #create test db
-        docker compose exec db mysql -u root -p'MKdjWl$29#MD4&l5kw2?' -e "CREATE DATABASE IF NOT EXISTS prueba_tecnica_docfav_test"
+        docker compose exec db mysql -u root  -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_TEST_DATABASE"
 
         echo "Los contenedores se han levantado correctamente."
         echo "Accede al servidor PHP en http://localhost:8000"
