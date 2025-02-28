@@ -35,8 +35,8 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
     fi
 
     #create test db
-    docker compose exec db mysql -u root  -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_TEST_DATABASE"
-
+    docker compose exec db mysql -uroot  -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_TEST_DATABASE"
+    
     #Create database schema
     docker compose exec php vendor/bin/doctrine orm:schema-tool:update --force --complete
 
