@@ -17,13 +17,14 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: ${DB_HOST}
     platform: linux/amd64
+    env_file: ".env"
     environment:
-      MYSQL_ROOT_PASSWORD: 'MKdjWl$29#MD4&l5kw2?'
-      MYSQL_DATABASE: 'prueba_tecnica_docfav'
-      MYSQL_USER: 'usuario_docfav'
-      MYSQL_PASSWORD: 'MKdjWl$29#MD4&l5kw2?'
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
       - 7300:3306
@@ -45,7 +46,7 @@ services:
     depends_on:
       - php
     working_dir: /var/www/html
-
+  
 volumes:
   mysql_data:
     driver: local

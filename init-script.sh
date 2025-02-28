@@ -7,6 +7,14 @@ then
     exit 1
 fi
 
+# Cargar variables desde el archivo .env
+if [ -f .env ]; then
+    source .env
+else
+    echo "Archivo .env no encontrado"
+    exit 1
+fi
+
 # docker-compose.yml path
 DOCKER_COMPOSE_FILE="docker-compose.yml"
 
@@ -17,7 +25,7 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
     
     # Verify command execution
     if [ $? -eq 0 ]; then
-
+        echo ${DB_HOST}
         # Nombre del contenedor MySQL
         DB_CONTAINER="db"
         # Nombre del contenedor PHP

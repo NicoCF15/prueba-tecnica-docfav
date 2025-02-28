@@ -1,6 +1,8 @@
 <?php
 
 require_once '/var/www/html/vendor/autoload.php';
+require_once '/var/www/html/src/config/env.config.php';
+
 //__DIR__ .
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -9,13 +11,15 @@ use Doctrine\DBAL\DriverManager;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 // Configuración de la conexión a la base de datos
+(new DotEnvEnvironment)->load(__DIR__ . '/../../');
+
 $connectionOptions = [
-    'driver' => 'pdo_mysql',
-    'host' => 'localhost',    // Dirección de la base de datos
-    'dbname' => 'prueba_tecnica_docfav',  // Nombre de la base de datos
-    'user' => 'usuario_docfav',      // Nombre de usuario
-    'password' => 'MKdjWl$29#MD4&l5kw2?',  // Contraseña de la base de datos
-    'port' => '7300',         // Puerto (por defecto para MySQL)
+    'driver' => getenv('DB_DRIVER'),
+    'host' => getenv('DB_HOST'),    // Dirección de la base de datos
+    'dbname' => getenv('DB_DATABASE'),  // Nombre de la base de datos
+    'user' => getenv('DB_USERNAME'),      // Nombre de usuario
+    'password' => getenv('DB_PASSWORD'),  // Contraseña de la base de datos
+    'port' => getenv('DB_PORT'),         // Puerto (por defecto para MySQL) getenv('DB_PORT')
 ];
 
 // Configuración de los metadatos de Doctrine (puede estar en archivos YAML, XML o Annotations)
