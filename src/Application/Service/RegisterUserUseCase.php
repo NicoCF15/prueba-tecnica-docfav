@@ -9,8 +9,7 @@ use App\Application\DTO\UserResponseDto;
 use App\Domain\Events\User\UserRegisteredEvent;
 use App\Domain\Exceptions\UserAlreadyExistsException;
 use App\Domain\ValueObjects\Email;
-use App\Domain\ValueObjects\Name;
-use App\Domain\ValueObjects\Password;
+
 use App\Infrastructure\Events\EventDispatcher;
 
 class RegisterUserUseCase

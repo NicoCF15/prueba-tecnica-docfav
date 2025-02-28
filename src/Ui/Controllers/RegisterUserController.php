@@ -2,29 +2,21 @@
 
 namespace App\Ui\Controllers;
 
-use App\Application\Dto\RegisterUserRequest;
 use App\Application\Dto\UserResponseDto;
 use App\Application\Service\RegisterUserUseCase;
-use App\Domain\Events\Handler\UserRegisteredHandler;
-use App\Infrastructure\Repository\DoctrineUserRepository;
 
-use App\Domain\ValueObjects\Password;
-use App\Domain\ValueObjects\Name;
-use App\Domain\ValueObjects\Email;
-use App\Application\Service\EmailService;
-use App\Application\Service\UserRegistrationService;
-use App\Domain\Events\User\UserRegisteredEvent;
-use App\Infrastructure\Events\EventDispatcher;
+use App\Domain\Service\UserRegistrationDomainService;
+
 
 class RegisterUserController
 {
     private RegisterUserUseCase $registerUserUseCase;
-    private EventDispatcher $eventDispatcher;
+    private UserRegistrationDomainService $userRegistrationDomainService;
 
-    public function __construct(RegisterUserUseCase $registerUserUseCase, EventDispatcher $eventDispatcher)
+    public function __construct(RegisterUserUseCase $registerUserUseCase)
     {
         $this->registerUserUseCase = $registerUserUseCase;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->userRegistrationDomainService = new UserRegistrationDomainService();
     }
 
     public function register()
@@ -45,25 +37,9 @@ class RegisterUserController
             return;
         }
 
-        // Crear Value Objects para el nombre, correo y contraseña
-        try {
-            $name = new Name($data['name']);
-            $email = new Email($data['email']);
-            $password = new Password($data['password']);
-        } 
-        catch (\InvalidArgumentException $e) {
-
-            $this->sendErrorResponse($e->getMessage(), $e->getCode());
-            return;
-        }
-
         // Ejecutar el caso de uso
         try {
-            $registerUserRequest = new RegisterUserRequest($name, $email, $password);
-
-            $emailService = new EmailService();
-            $eventHandler = new UserRegisteredHandler($emailService);
-            $this->eventDispatcher->addListener(UserRegisteredEvent::class, [$eventHandler, 'handle']);
+            $registerUserRequest = $this->userRegistrationDomainService->createRegisterUserRequest($data['name'],$data['email'],$data['password']);
 
             $userResponseDTO = $this->registerUserUseCase->execute($registerUserRequest);
 
@@ -85,14 +61,3 @@ class RegisterUserController
     }
 
 }
-
-// Aquí la instancia del controlador con la inyección del caso de uso.
-$entityManager = require '/var/www/html/src/config/bootstrap.php';
-$userRepository = new DoctrineUserRepository($entityManager);
-$eventDispatcher = new EventDispatcher();
-$registerUserUseCase = new RegisterUserUseCase($userRepository, $eventDispatcher);
-
-$controller = new RegisterUserController($registerUserUseCase, $eventDispatcher);
-$controller->register();
-
-

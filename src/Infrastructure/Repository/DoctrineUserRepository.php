@@ -28,7 +28,7 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
     }
 
     public function findById(UserId $id): ?User{
-        return $this->userRepository->find($id);
+        return $this->userRepository->findOneBy(['id.id' => $id->getId()]);
     }
 
     public function findByEmail(Email $email): ?User{
@@ -37,7 +37,8 @@ class DoctrineUserRepository extends EntityRepository implements UserRepositoryI
     }
 
     public function delete(UserId $id): void{
-        $this->entityManager->remove($id);
+        $user = $this->findById($id);
+        $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
 
