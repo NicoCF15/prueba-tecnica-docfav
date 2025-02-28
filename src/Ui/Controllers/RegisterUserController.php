@@ -2,21 +2,11 @@
 
 namespace App\Ui\Controllers;
 
-use App\Application\Dto\RegisterUserRequest;
 use App\Application\Dto\UserResponseDto;
 use App\Application\Service\RegisterUserUseCase;
-use App\Domain\Events\Handler\UserRegisteredHandler;
-use App\Infrastructure\Repository\DoctrineUserRepository;
 
-use App\Domain\ValueObjects\Password;
-use App\Domain\ValueObjects\Name;
-use App\Domain\ValueObjects\Email;
-use App\Application\Service\EmailService;
-use App\Application\Service\EventHandlerInitializationService;
-use App\Application\Service\UserRegistrationService;
-use App\Domain\Events\User\UserRegisteredEvent;
 use App\Domain\Service\UserRegistrationDomainService;
-use App\Infrastructure\Events\EventDispatcher;
+
 
 class RegisterUserController
 {
