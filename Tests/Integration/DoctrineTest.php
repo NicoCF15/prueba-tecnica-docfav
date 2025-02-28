@@ -1,6 +1,8 @@
 <?php
 namespace Tests\Infrastructure\Repository;
 
+require_once __DIR__ . '/../../src/config/env.config.php';
+
 use App\Infrastructure\Repository\DoctrineUserRepository;
 use App\Domain\Model\Entity\User;
 use App\Domain\ValueObjects\Email;
@@ -18,16 +20,15 @@ class DoctrineTest extends TestCase
     private EntityManagerInterface $entityManager;
     private DoctrineUserRepository $userRepository;
 
-    // Configuración de la base de datos de pruebas y EntityManager
     public function setUp(): void
     {
-        // Configuración de la conexión a MySQL
+        
         $connectionOptions = [
-            'driver' => 'pdo_mysql',
-            'host' => 'mysql_db', 
-            'dbname' => 'prueba_tecnica_docfav_test',  
+            'driver' => getenv('DB_DRIVER'),
+            'host' => getenv('DB_HOST'), 
+            'dbname' => getenv('DB_TEST_DATABASE'),  
             'user' => 'root',
-            'password' => 'MKdjWl$29#MD4&l5kw2?', 
+            'password' => getenv('DB_ROOT_PASSWORD'), 
             'port' => 3306, 
         ];
 
