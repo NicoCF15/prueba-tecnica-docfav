@@ -1,19 +1,48 @@
 <?php
 
+/**
+* Abstract implementation of server router
+*
+* The router class can define routes to simulate an api and consume the
+* services the api give.
+* 
+*/
 class Router
 {
     private $routes = [];
 
+    /**
+    * Implements a get route to consume
+    *
+    * @param $route route method.
+    * @param $callback the function to execute in the route.
+    * @return void
+    */
     public function get($route, $callback)
     {
         $this->addRoute('GET', $route, $callback);
     }
 
+    /**
+    * Implements a post route to consume
+    *
+    * @param $route route method.
+    * @param $callback the function to execute in the route.
+    * @return void
+    */
     public function post($route, $callback)
     {
         $this->addRoute('POST', $route, $callback);
     }
 
+    /**
+    * Add routes to route array
+    *
+    * @param $method route method.
+    * @param $route the route name.
+    * @param $callback the function to execute in the route.
+    * @return void
+    */
     private function addRoute($method, $route, $callback)
     {
         $this->routes[] = [
@@ -23,6 +52,10 @@ class Router
         ];
     }
 
+    /**
+    * Create the routes in the server
+    * @return void
+    */
     public function run()
     {
         $method = $_SERVER['REQUEST_METHOD'];
