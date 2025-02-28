@@ -10,11 +10,14 @@ class UserId
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
-    private $id;
+    private ?int $id = null; // El tipo de dato debe ser integer, ya que es generado automáticamente
 
-    public function __construct(string $id)
+    public function __construct(?int $id = null)
     {
-        $this->id = $id;
+        // in case we need to manually set the id, this is needed.
+        if ($id !== null) {
+            $this->id = $id;
+        }
     }
 
     public function getId(): string
