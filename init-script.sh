@@ -34,6 +34,12 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
         exit 1
     fi
 
+    echo "Esperando a los contenedores"
+    sleep 15;
+
+    # Esperar hasta que la base de datos esté accesible
+    #docker-compose exec -T php bash -c "until mysql -h db -u ${DB_USERNAME} -p${DB_PASSWORD} -e 'select 1'; do echo 'Esperando MySQL...'; sleep 5; done"
+
     #create test db
     docker compose exec db mysql -uroot  -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_TEST_DATABASE"
     
