@@ -2,7 +2,7 @@ services:
   php:
     build:
       context: .
-    #  dockerfile: Dockerfile
+      dockerfile: Dockerfile
     container_name: php_app
     ports:
       - "8000:8000"   # Exponer el puerto para acceder al servidor web PHP (si es necesario)
@@ -17,7 +17,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: ${DB_HOST}
+    container_name: mysql_db
     platform: linux/amd64
     env_file: ".env"
     environment:

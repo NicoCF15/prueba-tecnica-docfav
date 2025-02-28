@@ -18,7 +18,7 @@ $connectionOptions = [
     'dbname' => getenv('DB_DATABASE'),  // Nombre de la base de datos
     'user' => getenv('DB_USERNAME'),      // Nombre de usuario
     'password' => getenv('DB_PASSWORD'),  // Contraseña de la base de datos
-    'port' => getenv('DB_PORT'),         // Puerto (por defecto para MySQL) getenv('DB_PORT')
+    'port' => '3306',         // Puerto (por defecto para MySQL) getenv('DB_PORT')
 ];
 
 // Configuración de los metadatos de Doctrine (puede estar en archivos YAML, XML o Annotations)
@@ -35,14 +35,7 @@ $config = ORMSetup::createAttributeMetadataConfiguration(
 );
 
 // configuring the database connection
-$connection = DriverManager::getConnection([
-    'driver' => 'pdo_mysql',
-    'host' => 'mysql_db',    // Dirección de la base de datos (nombre del contenedor)
-    'dbname' => 'prueba_tecnica_docfav',  // Nombre de la base de datos
-    'user' => 'usuario_docfav',      // Nombre de usuario
-    'password' => 'MKdjWl$29#MD4&l5kw2?',  // Contraseña de la base de datos
-    'port' => '3306',         // Puerto (por defecto para MySQL)
-], $config);
+$connection = DriverManager::getConnection($connectionOptions, $config);
 
 // Crear el EntityManager
 $entityManager = new EntityManager($connection, $config);
