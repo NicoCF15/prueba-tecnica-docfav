@@ -28,11 +28,8 @@ O utiliza los comandos en el Makefile
 3. Pruebas de la "API"
 Para realizar las pruebas del repositorio basta con mandar una peticion http a localhost:8000/user con su correspondiente body
 
-```bash
-docker compose exec php ./vendor/bin/phpunit --testdox -v Tests
-```
 
-3. Pruebas con PhpUnit
+4. Pruebas con PhpUnit
 Para realizar las pruebas unitarias y de integración ejecuta el siguiente comando
 
 ```bash
